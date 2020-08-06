@@ -1,0 +1,12 @@
+
+/* Class = "UIButton"; normalTitle = "        确定"; ObjectID = "83U-TE-Xcm"; */
+"83U-TE-Xcm.normalTitle" = "        确定";
+
+/* Class = "UITextView"; text = "默认文字"; ObjectID = "CBZ-Ky-Hbi"; */
+"CBZ-Ky-Hbi.text" = "默认文字";
+
+/* Class = "UITextField"; placeholder = "16"; ObjectID = "P5F-Rp-q8Y"; */
+"P5F-Rp-q8Y.placeholder" = "16";
+
+/* Class = "UIButton"; normalTitle = "#999999"; ObjectID = "e7i-8Z-0Mz"; */
+"e7i-8Z-0Mz.normalTitle" = "#999999";
