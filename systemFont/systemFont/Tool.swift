@@ -79,7 +79,7 @@ class Tool: NSObject {
                 fonts.append("\(fileName)")
                 info?.updateValue(fonts, forKey: "UIAppFonts")
                 
-                NotificationCenter.default.post(name: Notification_addNewFont, object: copyToURL.path)
+                AllFontsModel.sharedInstance.importedFontsInit()
             } catch {
                 Tool.showMessage("转存错误\n\(error.localizedDescription)")
                 return false;

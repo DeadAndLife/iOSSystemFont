@@ -14,7 +14,6 @@ let Notification_ImportedFontFinished = NSNotification.Name(rawValue: "importedF
 class AllFontsModel: NSObject {
     static let sharedInstance : AllFontsModel = {
         let instance = AllFontsModel()
-        NotificationCenter.default.addObserver(self, selector: #selector(addNewFont(_:)), name: Notification_addNewFont, object: nil)
         return instance
     }()
     
@@ -174,10 +173,6 @@ class AllFontsModel: NSObject {
             }
             return familyModel.fontModels[indexPath.row]
         }
-    }
-    
-    @objc func addNewFont(_ notifiction: Notification) -> Void {
-        importedFontsInit()
     }
 }
 
