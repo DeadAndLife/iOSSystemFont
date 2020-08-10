@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		869228A124E0D61C006FEEB7 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869228A024E0D61C006FEEB7 /* TableViewController.swift */; };
+		869228A524E0DC13006FEEB7 /* AllFontsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869228A424E0DC13006FEEB7 /* AllFontsModel.swift */; };
+		86BF4A4324E11876009830D7 /* extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BF4A4224E11876009830D7 /* extension.swift */; };
 		86F08DBF24DA67F10071F4E7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F08DBE24DA67F10071F4E7 /* AppDelegate.swift */; };
 		86F08DC124DA67F10071F4E7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F08DC024DA67F10071F4E7 /* SceneDelegate.swift */; };
 		86F08DC324DA67F10071F4E7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F08DC224DA67F10071F4E7 /* ViewController.swift */; };
@@ -19,6 +22,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8692289C24E0D5F5006FEEB7 /* systemFont-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "systemFont-Bridging-Header.h"; sourceTree = "<group>"; };
+		869228A024E0D61C006FEEB7 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		869228A424E0DC13006FEEB7 /* AllFontsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFontsModel.swift; sourceTree = "<group>"; };
+		86BF4A4224E11876009830D7 /* extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extension.swift; sourceTree = "<group>"; };
 		86F08DBB24DA67F10071F4E7 /* 苹果系统文字.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "苹果系统文字.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86F08DBE24DA67F10071F4E7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		86F08DC024DA67F10071F4E7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -67,6 +74,9 @@
 				86F08DBE24DA67F10071F4E7 /* AppDelegate.swift */,
 				86F08DC024DA67F10071F4E7 /* SceneDelegate.swift */,
 				86F08DC224DA67F10071F4E7 /* ViewController.swift */,
+				86BF4A4224E11876009830D7 /* extension.swift */,
+				869228A424E0DC13006FEEB7 /* AllFontsModel.swift */,
+				869228A024E0D61C006FEEB7 /* TableViewController.swift */,
 				86F08DD424DA87C90071F4E7 /* SystemFontTableViewCell.swift */,
 				86F08DD524DA87C90071F4E7 /* SystemFontTableViewCell.xib */,
 				86F08DE724DBF5E00071F4E7 /* Tool.swift */,
@@ -74,6 +84,7 @@
 				86F08DC724DA67F20071F4E7 /* Assets.xcassets */,
 				86F08DC924DA67F20071F4E7 /* LaunchScreen.storyboard */,
 				86F08DCC24DA67F20071F4E7 /* Info.plist */,
+				8692289C24E0D5F5006FEEB7 /* systemFont-Bridging-Header.h */,
 			);
 			path = systemFont;
 			sourceTree = "<group>";
@@ -110,6 +121,7 @@
 				TargetAttributes = {
 					86F08DBA24DA67F10071F4E7 = {
 						CreatedOnToolsVersion = 11.6;
+						LastSwiftMigration = 1160;
 					};
 				};
 			};
@@ -152,10 +164,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				86F08DC324DA67F10071F4E7 /* ViewController.swift in Sources */,
+				869228A124E0D61C006FEEB7 /* TableViewController.swift in Sources */,
+				869228A524E0DC13006FEEB7 /* AllFontsModel.swift in Sources */,
 				86F08DBF24DA67F10071F4E7 /* AppDelegate.swift in Sources */,
 				86F08DC124DA67F10071F4E7 /* SceneDelegate.swift in Sources */,
 				86F08DE824DBF5E10071F4E7 /* Tool.swift in Sources */,
 				86F08DD624DA87C90071F4E7 /* SystemFontTableViewCell.swift in Sources */,
+				86BF4A4324E11876009830D7 /* extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +318,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6DT57K24F5;
 				INFOPLIST_FILE = systemFont/Info.plist;
@@ -313,6 +329,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jixiultdco.systemFont;
 				PRODUCT_NAME = "苹果系统文字";
+				SWIFT_OBJC_BRIDGING_HEADER = "systemFont/systemFont-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -322,6 +340,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6DT57K24F5;
 				INFOPLIST_FILE = systemFont/Info.plist;
@@ -332,6 +351,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jixiultdco.systemFont;
 				PRODUCT_NAME = "苹果系统文字";
+				SWIFT_OBJC_BRIDGING_HEADER = "systemFont/systemFont-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

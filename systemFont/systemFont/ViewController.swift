@@ -23,8 +23,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate,
 
     @IBOutlet weak var pickerViewTop: NSLayoutConstraint!
     
-    var allFonts: NSMutableArray = NSMutableArray.init()
-    let defaultString = "默认文字,双击标题即可复制字体名称"
+//    var allFonts: NSMutableArray = NSMutableArray.init()
+    var allFonts: AllFontsModel = AllFontsModel.sharedInstance
+    
+    let defaultString = "Default text. Double click the title to copy the font name\n默认文字,双击标题即可复制字体名称\n1234567890😊"
     
     var nowColor: UIColor = UIColor.init(hexCode: "#999999", alpha: 1)
 //        UIColor.init(white: 0.6, alpha: 1)
@@ -41,24 +43,41 @@ class ViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate,
         
 //            UIColor.init(white: 0.8, alpha: 1)
 //        viewInit()
+        
         tableView.register(UINib(nibName: "SystemFontTableViewCell", bundle: nil), forCellReuseIdentifier: "fontCell")
         
         // Do any additional setup after loading the view.
     }
     
     func dataInit() -> Void {
-        DispatchQueue.global().async {
-            for familyName: String in UIFont.familyNames {
-                for fontName: String in UIFont.fontNames(forFamilyName: familyName) {
-                    self.allFonts.add(fontName)
-                }
-            }
-            DispatchQueue.main.async {
-                if self.isViewLoaded {
-                    self.tableView.reloadData()
-                }
-            }
+        allFonts.systemFontsInit()
+        allFonts.importedFontsInit()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(systemFontsRefreshed(_:)), name: Notification_SystemFontFinished, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(importedFontsRefreshed(_:)), name: Notification_ImportedFontFinished, object: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "pushSearch" {
+            let controller = segue.destination as! TableViewController
+            controller.allFontsModel = self.allFonts
+            controller.nowFontSize = self.nowFontSize
+            controller.nowColor = self.nowColor
+            controller.nowText = showTextView.text
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    //MARK: - NotificationCenter
+    @objc func systemFontsRefreshed(_ notifiction: Notification) -> Void {
+        self.tableView.reloadData()
+    }
+    
+    @objc func importedFontsRefreshed(_ notifiction: Notification) -> Void {
+        self.tableView.reloadData()
     }
     
     //MARK: - UITextFieldDelegate
@@ -84,31 +103,115 @@ class ViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate,
     
     //MARK: - UITableViewDelegate
      func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2+allFonts.systemFonts.count+allFonts.importedFonts.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return allFonts.count
+        if section == 0 {
+            return 0
+        } else if section <= allFonts.systemFonts.count {
+            let index = (section-1)%allFonts.systemFonts.count
+            let fontFamilyModel = allFonts.systemFonts[index]
+            return fontFamilyModel.fontModels.count
+        } else if section == allFonts.systemFonts.count+1 {
+            return 0
+        } else {
+            let index = (section-2-allFonts.systemFonts.count)%allFonts.importedFonts.count
+            let fontFamilyModel = allFonts.importedFonts[index]
+            return fontFamilyModel.fontModels.count
+        }
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 55
+    }
+    
+//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        if section == 0 {
+//            return "系统自带字体"
+//        } else if section <= allFonts.systemFonts.count {
+//            let index = (section-1)%allFonts.systemFonts.count
+//            let fontFamilyModel = allFonts.systemFonts.object(at: index) as! FontFamilyModel
+//            return fontFamilyModel.fontFamily
+//        } else if section == allFonts.systemFonts.count+1 {
+//            return "导入字体"
+//        } else {
+//            let index = (section-2-allFonts.systemFonts.count)%allFonts.importedFonts.count
+//            let fontFamilyModel = allFonts.importedFonts.object(at: index) as! FontFamilyModel
+//            return fontFamilyModel.fontFamily
+//        }
+//        return ""
+//    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView.init()
+        headerView.backgroundColor = UIColor.init(hexCode: "#f5f5f5", alpha: 1)
+        let titleLabel = UILabel.init()
+        titleLabel.textColor = .black
+        titleLabel.numberOfLines = 0
+        headerView.addSubview(titleLabel)
+        
+        if section == 0 {
+            titleLabel.text = "系统自带字体"
+            titleLabel.font = UIFont.systemFont(ofSize: nowFontSize+4)
+        } else if section <= allFonts.systemFonts.count {
+            let index = (section-1)%allFonts.systemFonts.count
+            let fontFamilyModel = allFonts.systemFonts[index]
+            titleLabel.text = fontFamilyModel.fontFamily
+            
+            titleLabel.font = UIFont.systemFont(ofSize: nowFontSize+2)
+        } else if section == allFonts.systemFonts.count+1 {
+            titleLabel.text = "导入字体"
+            titleLabel.font = UIFont.systemFont(ofSize: nowFontSize+4)
+        } else {
+            let index = (section-2-allFonts.systemFonts.count)%allFonts.importedFonts.count
+            let fontFamilyModel = allFonts.importedFonts[index]
+            titleLabel.text = fontFamilyModel.fontFamily
+            
+            titleLabel.font = UIFont.systemFont(ofSize: nowFontSize+2)
+        }
+        let titleSize = titleLabel.sizeThatFits(CGSize.init(width: mainScreenSize.width-15.0-15.0, height: CGFloat(MAXFLOAT)))
+        titleLabel.frame = CGRect.init(x: 15, y: 2, width: titleSize.width, height: titleSize.height+4)
+        
+        titleLabel.sizeToFit()
+        return headerView
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "fontCell", for: indexPath) as! SystemFontTableViewCell
         
         cell.selectionStyle = .none
-
-        let fontString = allFonts[indexPath.row] as! String
-        let nowFont = UIFont.init(name: fontString, size: nowFontSize)
-        let cff = CTFontCopyDisplayName(nowFont! as CTFont)
-        cell.fontNameLabel.text = "\(indexPath.row+1) \(fontString) \n  \(cff as String)"
+        
+        if indexPath.section == 0 {
+        } else if indexPath.section <= allFonts.systemFonts.count {
+            let familyIndex = (indexPath.section-1)%allFonts.systemFonts.count
+            let fontFamilyModel = allFonts.systemFonts[familyIndex]
+            
+            let fontIndex = indexPath.row%fontFamilyModel.fontModels.count
+            let fontModel = fontFamilyModel.fontModels[fontIndex]
+            let nowFont = UIFont.init(name: fontModel.fontName, size: nowFontSize)
+            
+            cell.fontNameLabel.text = "\(indexPath.row+1) \(String(describing: fontModel.fontName)) \n  \(String(describing: fontModel.fontDisplayName))"
+            cell.fontNameLabel.font = nowFont
+            cell.showTextLabel.font = nowFont
+            
+        } else if indexPath.section == allFonts.systemFonts.count+1 {
+        } else {
+            let familyIndex = (indexPath.section-2-allFonts.systemFonts.count)%allFonts.importedFonts.count
+            let fontFamilyModel = allFonts.importedFonts[familyIndex]
+            
+            let fontIndex = indexPath.row%fontFamilyModel.fontModels.count
+            let fontModel = fontFamilyModel.fontModels[fontIndex]
+            let nowFont = UIFont.init(name: fontModel.fontName, size: nowFontSize)
+            
+            cell.fontNameLabel.text = "\(indexPath.row+1) \(String(describing: fontModel.fontName)) \n  \(String(describing: fontModel.fontDisplayName))"
+            cell.fontNameLabel.font = nowFont
+            cell.showTextLabel.font = nowFont
+        }
+        
         cell.showTextLabel.text = showTextView.text
         cell.fontNameLabel.textColor = nowColor
         cell.showTextLabel.textColor = nowColor
-        cell.fontNameLabel.font = nowFont
-        cell.showTextLabel.font = nowFont
 
         return cell
     }
@@ -166,40 +269,3 @@ class ViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate,
     }
     
 }
-
-extension UIColor {
-    convenience init(hexCode: String, alpha: Float) {
-        var cString:String = hexCode.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-//        let scanner = Scanner(string: cString)
-        
-        if (cString.hasPrefix("#")) {
-            cString.remove(at: cString.startIndex)
-//            scanner.scanLocation = 1
-//            scanner.locale = 1
-        }
-//        if (cString.hasPrefix("0x")) {
-//            scanner.scanLocation = 2
-////            scanner.locale = 2
-//        }
-        if ((cString.count) != 6) {
-            self.init()
-        } else {
-            var rgbValue:UInt32 = 0
-            Scanner(string: cString).scanHexInt32(&rgbValue)
-            self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-                      green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-                      blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-                      alpha: CGFloat(alpha))
-        }
-    }
-    
-    func toHEXColorString() -> String {
-        var R: CGFloat = 0, G: CGFloat = 0, B: CGFloat = 0, A: CGFloat = 0
-        self.getRed(&R, green: &G, blue: &B, alpha: &A)
-        
-        let rgb = (Int)(R*255.0)<<16 | (Int)(G*255.0)<<8 | (Int)(B*255.0)<<0
-        
-        return String.localizedStringWithFormat("#%06x", rgb)
-    }
-}
-
